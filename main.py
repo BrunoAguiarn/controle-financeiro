@@ -1,6 +1,17 @@
-
+import json
 movimentacoes = []
 
+def salvar_movimentacoes():
+    with open('movimentacoes.json', 'w', encoding='utf-8') as arquivo:
+        json.dump(movimentacoes, arquivo, indent=4, ensure_ascii=False)
+
+def carregar_movimentacoes():
+    global movimentacoes
+    try:
+        with open('movimentacoes.json', 'r', encoding='utf-8') as arquivo:
+            movimentacoes = json.load(arquivo)
+    except FileNotFoundError:
+        movimentacoes = []
 
 def cadastrar_receita():
     print('\nÁrea de cadastro de receita')
@@ -18,11 +29,12 @@ def cadastrar_receita():
                     print('Não foi digitada uma categoria')
                 else:
                     movimentacoes.append({
-                                'tipo': 'receita',
-                                'descricao': descricao,
-                                'valor': valor,
-                                'categoria': categoria
-                            })
+                        'tipo': 'receita',
+                        'descricao': descricao,
+                        'valor': valor,
+                        'categoria': categoria
+                    })
+                    salvar_movimentacoes()
                     print('Receita cadastrada com sucesso!')
         except ValueError:
             print('Você não digitou um valor válido.')
@@ -49,6 +61,7 @@ def cadastrar_despesa():
                         'valor': valor,
                         'categoria': categoria
                     })
+                    salvar_movimentacoes()
                     print('Despesa cadastrada com sucesso!')
         except ValueError:
             print('Você não digitou um valor válido.')
@@ -76,6 +89,8 @@ def calcular_saldo():
     print(f'Total Despesas: R$ {total_despesas:.2f}')
     print(f'Saldo Final: R$ {saldo_final:.2f}')
 
+carregar_movimentacoes()
+
 while True:
 
     print('\n=== CONTROLE FINANCEIRO ===')
@@ -97,4 +112,4 @@ while True:
             break
         case _:
             print('Opção inválida. Tente novamente\n')
-    
+
