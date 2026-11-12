@@ -12,6 +12,8 @@ def carregar_movimentacoes():
             movimentacoes = json.load(arquivo)
     except FileNotFoundError:
         movimentacoes = []
+    except json.JSONDecodeError:
+        movimentacoes = []
 
 def cadastrar_receita():
     print('\nÁrea de cadastro de receita')
