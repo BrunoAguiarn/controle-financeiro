@@ -13,12 +13,17 @@ def cadastrar_receita():
             if valor <= 0:
                 print('O valor deve ser maior que zero.')
             else:
-                movimentacoes.append({
-                            'tipo': 'receita',
-                            'descricao': descricao,
-                            'valor': valor
-                        })
-                print('Receita cadastrada com sucesso!')
+                categoria = input('Digite a categoria da receita: ').strip()
+                if categoria == '':
+                    print('Não foi digitada uma categoria')
+                else:
+                    movimentacoes.append({
+                                'tipo': 'receita',
+                                'descricao': descricao,
+                                'valor': valor,
+                                'categoria': categoria
+                            })
+                    print('Receita cadastrada com sucesso!')
         except ValueError:
             print('Você não digitou um valor válido.')
         
@@ -34,12 +39,17 @@ def cadastrar_despesa():
             if valor <= 0:
                 print('O valor deve ser maior que zero.')
             else: 
-                movimentacoes.append({
-                    'tipo': 'despesa',
-                    'descricao': descricao,
-                    'valor': valor
-                })
-                print('Despesa cadastrada com sucesso!')
+                categoria = input('Digite a categoria: ').strip()
+                if categoria == '':
+                    print('Não foi digitada uma categoria')
+                else:
+                    movimentacoes.append({
+                        'tipo': 'despesa',
+                        'descricao': descricao,
+                        'valor': valor,
+                        'categoria': categoria
+                    })
+                    print('Despesa cadastrada com sucesso!')
         except ValueError:
             print('Você não digitou um valor válido.')
 
@@ -48,7 +58,7 @@ def listar_movimentacoes():
     print('\nÁrea de listagem de movimentações')
     if movimentacoes:
         for movimentacao in movimentacoes:
-            print(f"{movimentacao['tipo']} - {movimentacao['descricao']} - R$ {movimentacao['valor']:.2f}")
+            print(f"{movimentacao['tipo']} - {movimentacao['descricao']} - {movimentacao['categoria']} - R$ {movimentacao['valor']:.2f}")
     else:
         print('Nenhuma movimentação cadastrada.')
 
