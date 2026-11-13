@@ -15,59 +15,31 @@ def carregar_movimentacoes():
     except json.JSONDecodeError:
         movimentacoes = []
 
-def cadastrar_receita():
-    print('\nÁrea de cadastro de receita')
-    descricao = input('Digite a descrição da Receita: ').strip()
+def cadastrar_movimentacao(tipo):
+    descricao = input(f'Digite a descrição da {tipo}: ').strip()
     if descricao == '':
         print('Não foi digitada uma descrição.')
-    else:
-        try:
-            valor = float(input('Digite o valor da Receita: '))
-            if valor <= 0:
-                print('O valor deve ser maior que zero.')
-            else:
-                categoria = input('Digite a categoria da receita: ').strip()
-                if categoria == '':
-                    print('Não foi digitada uma categoria')
-                else:
-                    movimentacoes.append({
-                        'tipo': 'receita',
-                        'descricao': descricao,
-                        'valor': valor,
-                        'categoria': categoria
-                    })
-                    salvar_movimentacoes()
-                    print('Receita cadastrada com sucesso!')
-        except ValueError:
-            print('Você não digitou um valor válido.')
-        
-    
-def cadastrar_despesa():
-    print('\nÁrea de cadastro de despesa')
-    descricao = input('Digite a descrição da Despesa: ').strip()
-    if descricao == '':
-        print('Não foi digitada uma descrição.')
-    else:
-        try:
-            valor = float(input('Digite o valor da Despesa: '))
-            if valor <= 0:
-                print('O valor deve ser maior que zero.')
-            else: 
-                categoria = input('Digite a categoria: ').strip()
-                if categoria == '':
-                    print('Não foi digitada uma categoria')
-                else:
-                    movimentacoes.append({
-                        'tipo': 'despesa',
-                        'descricao': descricao,
-                        'valor': valor,
-                        'categoria': categoria
-                    })
-                    salvar_movimentacoes()
-                    print('Despesa cadastrada com sucesso!')
-        except ValueError:
-            print('Você não digitou um valor válido.')
-
+        return
+    try:
+        valor = float(input(f'Digite o valor da {tipo}: '))
+        if valor <= 0:
+            print('O valor deve ser maior que zero.')
+            return
+        categoria = input('Digite a categoria: ').strip()
+        if categoria == '':
+            print('Não foi digitada uma categoria')
+            return
+        movimentacoes.append({
+            'tipo': tipo,
+            'descricao': descricao,
+            'valor': valor,
+            'categoria': categoria
+        })
+        salvar_movimentacoes()
+        print(f'{tipo} cadastrada com sucesso!')
+    except ValueError:
+        print('Você não digitou um valor válido.')
+        return
 
 def listar_movimentacoes():
     print('\nÁrea de listagem de movimentações')
@@ -98,13 +70,17 @@ while True:
     print('\n=== CONTROLE FINANCEIRO ===')
     print('1 - Cadastrar Receita\n2 - Cadastrar Despesa\n3 - Listar Movimentações\n4 - Mostrar Saldo\n5 - Sair')
 
-    escolha = int(input('Escolha uma opção: '))
+    try:
+        escolha = int(input('Escolha uma opção: '))
+    except ValueError:
+        print('Você digitou um caractere inválido!')
+        continue
 
     match escolha:
         case 1:
-            cadastrar_receita()
+            cadastrar_movimentacao('receita')
         case 2:
-            cadastrar_despesa()
+            cadastrar_movimentacao('despesa')
         case 3:
             listar_movimentacoes()
         case 4:
