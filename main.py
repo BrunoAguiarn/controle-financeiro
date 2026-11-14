@@ -1,18 +1,35 @@
 import json
+import shutil
+import os
+
 movimentacoes = []
+arquivo_valido = True
 
 def salvar_movimentacoes():
+    if not arquivo_valido:
+        print('O arquivo de movimentações está corrompido.')
+        return False
     with open('movimentacoes.json', 'w', encoding='utf-8') as arquivo:
         json.dump(movimentacoes, arquivo, indent=4, ensure_ascii=False)
+    return True
 
 def carregar_movimentacoes():
     global movimentacoes
+    global arquivo_valido
     try:
         with open('movimentacoes.json', 'r', encoding='utf-8') as arquivo:
             movimentacoes = json.load(arquivo)
     except FileNotFoundError:
         movimentacoes = []
     except json.JSONDecodeError:
+        print('Erro: o arquivo de movimentações está corrompido')
+        print('Iniciando criação de backup...')
+        if os.path.exists('movimentacoes_backup.json'):
+            print('O backup já existe!')
+        else:
+            shutil.copy2('movimentacoes.json', 'movimentacoes_backup.json')
+            print('Cópia de segurança criada com sucesso!')
+        arquivo_valido = False
         movimentacoes = []
 
 def cadastrar_movimentacao(tipo):
@@ -35,8 +52,12 @@ def cadastrar_movimentacao(tipo):
             'valor': valor,
             'categoria': categoria
         })
-        salvar_movimentacoes()
-        print(f'{tipo} cadastrada com sucesso!')
+        salvou = salvar_movimentacoes()
+        if salvou:
+            print(f'{tipo} cadastrada com sucesso!')
+        else:
+            movimentacoes.pop()
+            print('A movimentação não foi salva')
     except ValueError:
         print('Você não digitou um valor válido.')
         return
@@ -67,6 +88,10 @@ carregar_movimentacoes()
 
 while True:
 
+    if not arquivo_valido:
+        print('O programa será encerrado, verificar arquivo de movimentações manualmente.')
+        break
+
     print('\n=== CONTROLE FINANCEIRO ===')
     print('1 - Cadastrar Receita\n2 - Cadastrar Despesa\n3 - Listar Movimentações\n4 - Mostrar Saldo\n5 - Sair')
 
@@ -90,4 +115,3 @@ while True:
             break
         case _:
             print('Opção inválida. Tente novamente\n')
-
