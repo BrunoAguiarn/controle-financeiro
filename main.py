@@ -9,9 +9,13 @@ def salvar_movimentacoes():
     if not arquivo_valido:
         print('O arquivo de movimentações está corrompido.')
         return False
-    with open('movimentacoes.json', 'w', encoding='utf-8') as arquivo:
-        json.dump(movimentacoes, arquivo, indent=4, ensure_ascii=False)
-    return True
+    try:
+        with open('movimentacoes.json', 'w', encoding='utf-8') as arquivo:
+            json.dump(movimentacoes, arquivo, indent=4, ensure_ascii=False)
+        return True
+    except OSError:
+        print('Não foi possível salvar o arquivo')
+        return False
 
 def carregar_movimentacoes():
     global movimentacoes
@@ -27,8 +31,11 @@ def carregar_movimentacoes():
         if os.path.exists('movimentacoes_backup.json'):
             print('O backup já existe!')
         else:
-            shutil.copy2('movimentacoes.json', 'movimentacoes_backup.json')
-            print('Cópia de segurança criada com sucesso!')
+            try:
+                shutil.copy2('movimentacoes.json', 'movimentacoes_backup.json')
+                print('Cópia de segurança criada com sucesso!')
+            except OSError:
+                print('O arquivo de Backup não foi gerado!')       
         arquivo_valido = False
         movimentacoes = []
 
