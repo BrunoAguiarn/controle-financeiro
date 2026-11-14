@@ -33,6 +33,7 @@ def carregar_movimentacoes():
         movimentacoes = []
 
 def cadastrar_movimentacao(tipo):
+    print(f'\n=== CADASTRAR {tipo.upper()} ===')
     descricao = input(f'Digite a descrição da {tipo}: ').strip()
     if descricao == '':
         print('Não foi digitada uma descrição.')
@@ -63,12 +64,44 @@ def cadastrar_movimentacao(tipo):
         return
 
 def listar_movimentacoes():
-    print('\nÁrea de listagem de movimentações')
+    print('\n=== LISTAGEM DE MOVIMENTAÇÕES ===')
     if movimentacoes:
         for movimentacao in movimentacoes:
             print(f"{movimentacao['tipo']} - {movimentacao['descricao']} - {movimentacao['categoria']} - R$ {movimentacao['valor']:.2f}")
     else:
         print('Nenhuma movimentação cadastrada.')
+
+def excluir_movimentacao():
+    print('\n=== EXCLUIR MOVIMENTAÇÃO ===')
+    if not movimentacoes:
+        print('Nenhuma movimentação para excluir.')
+        return
+    for indice, movimento in enumerate(movimentacoes, start=1):
+        print(f"{indice} - {movimento['tipo']} - {movimento['descricao']} - R${movimento['valor']:.2f}")
+    try:
+        indice = int(input('Digite o numero da movimentação que deseja excluir: ')) - 1
+        if 0 <= indice < len(movimentacoes):
+            confirma = (input('Confirma a exclusão? [S/N]: ').upper())
+            if confirma == 'S':
+                movimento = movimentacoes.pop(indice)
+                salvou = salvar_movimentacoes()
+                if salvou:
+                    print(f"Movimentação '{movimento['descricao']}' foi excluida")
+                    return
+                print('Não foi possível salvar a alteração. A movimentação foi restaurada.')
+                movimentacoes.insert(indice, movimento)
+                return
+            elif confirma == 'N':
+                print('A exclusão foi cancelada')
+                return
+            else:
+                print('Opção inválida')
+                return
+        print('A movimentação digitada não existe')
+        
+    except ValueError:
+        print('Você não digitou um numero válido.')
+        return
 
 def calcular_saldo():
     total_receitas = 0
@@ -79,7 +112,7 @@ def calcular_saldo():
         elif movimento['tipo'] == 'despesa':
             total_despesas += movimento['valor']
     saldo_final = total_receitas - total_despesas
-
+    print('\n=== CONSULTAR SALDO ===')
     print(f'Total Receitas: R$ {total_receitas:.2f}')
     print(f'Total Despesas: R$ {total_despesas:.2f}')
     print(f'Saldo Final: R$ {saldo_final:.2f}')
@@ -93,7 +126,7 @@ while True:
         break
 
     print('\n=== CONTROLE FINANCEIRO ===')
-    print('1 - Cadastrar Receita\n2 - Cadastrar Despesa\n3 - Listar Movimentações\n4 - Mostrar Saldo\n5 - Sair')
+    print('1 - Cadastrar Receita\n2 - Cadastrar Despesa\n3 - Listar Movimentações\n4 - Mostrar Saldo\n5 - Excluir Movimentação\n6 - Sair')
 
     try:
         escolha = int(input('Escolha uma opção: '))
@@ -111,6 +144,8 @@ while True:
         case 4:
             calcular_saldo()
         case 5:
+            excluir_movimentacao()
+        case 6:
             print(f'Encerrando o programa :)')
             break
         case _:
